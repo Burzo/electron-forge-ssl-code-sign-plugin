@@ -18,5 +18,10 @@
 	"devDependencies": {
 		"@types/fs-extra": "^11.0.4",
 		"typescript": "^5.3.3"
+	},
+	"homepage": "https://github.com/Burzo/electron-forge-ssl-code-sign-plugin#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Burzo/electron-forge-ssl-code-sign-plugin.git"
 	}
 }
