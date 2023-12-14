@@ -10,7 +10,6 @@
 	"author": "Miha Drofenik <miha.drofenik92@gmail.com>",
 	"license": "ISC",
 	"dependencies": {
-		"@electron-forge/maker-base": "^7.2.0",
 		"@electron-forge/plugin-base": "^7.2.0",
 		"@electron-forge/shared-types": "^7.2.0",
 		"fs-extra": "^11.2.0"
