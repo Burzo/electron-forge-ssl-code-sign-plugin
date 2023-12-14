@@ -1,4 +1,3 @@
-import { name } from "./package.json"
 import PluginBase from "@electron-forge/plugin-base"
 import {
 	ForgeMakeResult,
@@ -19,7 +18,7 @@ type ConfigTypes = {
 }
 
 class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
-	name = name
+	name = "@burzo/electron-forge-ssl-code-sign-plugin"
 
 	constructor(config: ConfigTypes) {
 		super(config)
