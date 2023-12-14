@@ -39,7 +39,7 @@ If you don't pass in `userTotp`, then `electron-forge` will pause the process wh
 
 Include the plugin in your Forge config as follows:
 
-```json
+```
     ...,
     "plugins": [
 		{
@@ -58,4 +58,4 @@ Include the plugin in your Forge config as follows:
 
 ## Contribution
 
-If anyone would like to add msi signing support, feel free to submit a PR :)
+If anyone would like to add `msi` signing support, feel free to submit a PR :)
