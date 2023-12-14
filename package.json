@@ -1,0 +1,22 @@
+{
+	"name": "@burzo/electron-forge-ssl-code-sign-plugin",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "tsc --project tsconfig.json",
+		"publish": "npm run build && npm publish ./dist"
+	},
+	"author": "Miha Drofenik <miha.drofenik92@gmail.com>",
+	"license": "ISC",
+	"dependencies": {
+		"@electron-forge/maker-base": "^7.2.0",
+		"@electron-forge/plugin-base": "^7.2.0",
+		"@electron-forge/shared-types": "^7.2.0",
+		"fs-extra": "^11.2.0"
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^11.0.4",
+		"typescript": "^5.3.3"
+	}
+}
