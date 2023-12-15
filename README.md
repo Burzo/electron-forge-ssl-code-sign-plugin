@@ -8,10 +8,11 @@ Please note that `msi` files are currently not supported for signing.
 
 ## Prerequisites
 
-First, you need to download the CodeSignTool suitable for your OS:
+First, you need to download the CodeSignTool:
 
 - [Download for Windows](https://www.ssl.com/download/codesigntool-for-windows/)
-- [Download for Linux & macOS](https://www.ssl.com/download/codesigntool-for-linux-and-macos/)
+
+Please keep in mind that this plugin currently supports building only on Windows-based machines.
 
 ## Installation
 
