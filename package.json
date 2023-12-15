@@ -22,5 +22,18 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Burzo/electron-forge-ssl-code-sign-plugin.git"
-	}
+	},
+	"keywords": [
+		"electron",
+		"electron-forge",
+		"plugin",
+		"codesign",
+		"ssl",
+		"ssl-codesign",
+		"electron-forge-plugin",
+		"electron-build",
+		"ssl-certificates",
+		"automated-signing",
+		"esigner"
+	]
 }
