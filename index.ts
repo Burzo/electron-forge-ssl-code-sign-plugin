@@ -19,7 +19,7 @@ type ConfigTypes = {
 
 class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 	name = "@burzo/electron-forge-ssl-code-sign-plugin"
-
+	
 	constructor(config: ConfigTypes) {
 		super(config)
 		this.config = config
@@ -33,11 +33,27 @@ class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 		forgeConfig: ResolvedForgeConfig,
 		makeResults: ForgeMakeResult[],
 	) => {
+		const squirrelMaker: IForgeResolvableMaker = forgeConfig.makers.find(
+			(maker) =>
+				(maker as IForgeResolvableMaker)?.name ===
+				"@electron-forge/maker-squirrel",
+		) as IForgeResolvableMaker
+
+		if (!squirrelMaker) {
+			throw new Error(
+				`The plugin ${this.name} can not work without @electron-forge/maker-squirrel. Remove it from the plugins array.`,
+			)
+		}
+
 		const { userName, password, credentialId, userTotp, signToolPath } =
 			this.config
 
 		return makeResults.map((data) => {
-			const { artifacts } = data
+			const { artifacts, platform } = data
+
+			if (platform !== "win32") {
+				return data
+			}
 
 			if (!userName || !password || !credentialId || !signToolPath) {
 				throw new Error(
@@ -50,17 +66,6 @@ class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 			}
 
 			const releasesPath = artifacts[0]
-			const squirrelMaker: IForgeResolvableMaker = forgeConfig.makers.find(
-				(maker) =>
-					(maker as IForgeResolvableMaker)?.name ===
-					"@electron-forge/maker-squirrel",
-			) as IForgeResolvableMaker
-
-			if (!squirrelMaker) {
-				throw new Error(
-					`The plugin ${this.name} can not work without @electron-forge/maker-squirrel. Remove it from the plugins array.`,
-				)
-			}
 
 			/**
 			 * The exe is located where RELEASES is.
