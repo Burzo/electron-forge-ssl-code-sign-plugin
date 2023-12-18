@@ -8,7 +8,7 @@ Please note that `msi` files are currently not supported for signing.
 
 ## Prerequisites
 
-Only tested on `electron-forge` 7.x.
+This plugin works with electron-forge version >=7.
 
 Additionally, you need to download the CodeSignTool:
 
