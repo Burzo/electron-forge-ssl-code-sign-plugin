@@ -8,7 +8,9 @@ Please note that `msi` files are currently not supported for signing.
 
 ## Prerequisites
 
-First, you need to download the CodeSignTool:
+Only tested on `electron-forge` 7.x.
+
+Additionally, you need to download the CodeSignTool:
 
 - [Download for Windows](https://www.ssl.com/download/codesigntool-for-windows/)
 

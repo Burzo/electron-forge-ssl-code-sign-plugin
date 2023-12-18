@@ -9,12 +9,13 @@
 	},
 	"author": "Miha Drofenik <miha.drofenik92@gmail.com>",
 	"license": "ISC",
-	"dependencies": {
-		"@electron-forge/plugin-base": "^7.2.0",
-		"@electron-forge/shared-types": "^7.2.0",
-		"fs-extra": "^11.2.0"
+	"peerDependencies": {
+		"@electron-forge/plugin-base": ">=7.0.0"
 	},
 	"devDependencies": {
+		"fs-extra": "^11.2.0",
+		"@electron-forge/plugin-base": "^7.0.0",
+		"@electron-forge/shared-types": "^7.0.0",
 		"@types/fs-extra": "^11.0.4",
 		"typescript": "^5.3.3"
 	},
