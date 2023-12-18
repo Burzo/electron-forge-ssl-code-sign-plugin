@@ -1,6 +1,6 @@
 {
 	"name": "@burzo/electron-forge-ssl-code-sign-plugin",
-	"version": "1.0.4",
+	"version": "1.0.6",
 	"description": "This is an Electron Forge plugin designed to automatically sign files using SSL.com-certified eSigner during the build process. It simplifies code signing, providing a seamless, automated experience.",
 	"main": "dist/index.js",
 	"scripts": {
