@@ -43,8 +43,8 @@ If you don't pass in `userTotp`, then `electron-forge` will pause the process wh
 Include the plugin in your Forge config as follows:
 
 ```
-    ...,
-    "plugins": [
+	...,
+	"plugins": [
 		{
 			name: "@burzo/electron-forge-ssl-code-sign-plugin",
 			config: {
@@ -55,8 +55,8 @@ Include the plugin in your Forge config as follows:
 				signToolPath: "C:/apps/my-electron-forge-app/CodeSignTool-v1.3.0-windows/CodeSignTool",
 			},
 		},
-    ],
-    ...,
+	],
+	...,
 ```
 
 ## Contribution
