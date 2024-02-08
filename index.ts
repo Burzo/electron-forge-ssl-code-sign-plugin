@@ -33,16 +33,14 @@ class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 		forgeConfig: ResolvedForgeConfig,
 		makeResults: ForgeMakeResult[],
 	) => {
-		const squirrelMaker: IForgeResolvableMaker = forgeConfig.makers.find(
-			(maker) =>
-				(maker as IForgeResolvableMaker)?.name ===
-				"@electron-forge/maker-squirrel",
-		) as IForgeResolvableMaker
+    		const squirrelMaker = forgeConfig.makers.find(
+			(maker) => "name" in maker && !maker.name.includes("squirrel"),
+		);
 
-		if (!squirrelMaker) {
-			throw new Error(
-				`The plugin ${this.name} can not work without @electron-forge/maker-squirrel. Remove it from the plugins array.`,
-			)
+  		if (!squirrelMaker) {
+      			throw new Error(
+				`The plugin ${this.name} can not work without "@electron-forge/maker-squirrel" or "squirrel". Remove it from the plugins array.`,
+			);
 		}
 
 		const { userName, password, credentialId, userTotp, signToolPath } =
