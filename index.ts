@@ -19,6 +19,7 @@ type ConfigTypes = {
 
 class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 	name = "@burzo/electron-forge-ssl-code-sign-plugin"
+	config: ConfigTypes;
 	
 	constructor(config: ConfigTypes) {
 		super(config)
@@ -33,15 +34,18 @@ class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 		forgeConfig: ResolvedForgeConfig,
 		makeResults: ForgeMakeResult[],
 	) => {
-    		const squirrelMaker = forgeConfig.makers.find(
+		const _squirrelMaker = forgeConfig.makers.find(
 			(maker) => "name" in maker && !maker.name.includes("squirrel"),
 		);
 
-  		if (!squirrelMaker) {
-      			throw new Error(
+		if (!_squirrelMaker) {
+			throw new Error(
 				`The plugin ${this.name} can not work without "@electron-forge/maker-squirrel" or "squirrel". Remove it from the plugins array.`,
 			);
 		}
+
+		const squirrelMaker =
+			"config" in _squirrelMaker ? _squirrelMaker : { config: _squirrelMaker };
 
 		const { userName, password, credentialId, userTotp, signToolPath } =
 			this.config
