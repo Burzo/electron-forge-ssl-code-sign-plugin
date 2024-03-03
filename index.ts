@@ -1,33 +1,33 @@
-import PluginBase from "@electron-forge/plugin-base";
+import PluginBase from "@electron-forge/plugin-base"
 import {
 	ForgeConfigMaker,
 	ForgeMakeResult,
 	ForgeMultiHookMap,
 	ResolvedForgeConfig,
-} from "@electron-forge/shared-types";
-import { ExecSyncOptionsWithStringEncoding, execSync } from "child_process";
-import fs from "fs-extra";
-import path from "path";
+} from "@electron-forge/shared-types"
+import { ExecSyncOptionsWithStringEncoding, execSync } from "child_process"
+import fs from "fs-extra"
+import path from "path"
 
 type ConfigTypes = {
-	userName: string;
-	password: string;
-	credentialId: string;
-	userTotp?: string;
-	signToolPath: string;
-};
+	userName: string
+	password: string
+	credentialId: string
+	userTotp?: string
+	signToolPath: string
+}
 
 export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
-	name = "@burzo/electron-forge-ssl-code-sign-plugin";
-	config: ConfigTypes;
+	name = "@burzo/electron-forge-ssl-code-sign-plugin"
+	config: ConfigTypes
 
 	constructor(config: ConfigTypes) {
-		super(config);
-		this.config = config;
+		super(config)
+		this.config = config
 	}
 
 	getHooks(): ForgeMultiHookMap {
-		return { postMake: [this.postMake] };
+		return { postMake: [this.postMake] }
 	}
 
 	postMake = async (
@@ -36,26 +36,26 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 	) => {
 		const squirrelMaker: ForgeConfigMaker | undefined = forgeConfig.makers.find(
 			(maker) => "name" in maker && maker.name === "squirrel",
-		);
+		)
 		const squirrelResolvableMaker: ForgeConfigMaker | undefined =
 			forgeConfig.makers.find(
 				(maker) =>
 					"name" in maker && maker.name === "@electron-forge/maker-squirrel",
-			);
+			)
 		if (!squirrelMaker && !squirrelResolvableMaker) {
 			throw new Error(
 				`The plugin ${this.name} can not work without "@electron-forge/maker-squirrel" or "squirrel". Remove it from the plugins array.`,
-			);
+			)
 		}
 
 		const { userName, password, credentialId, userTotp, signToolPath } =
-			this.config;
+			this.config
 
 		return makeResults.map((data) => {
-			const { artifacts, platform } = data;
+			const { artifacts, platform } = data
 
 			if (platform !== "win32") {
-				return data;
+				return data
 			}
 
 			if (!userName || !password || !credentialId || !signToolPath) {
@@ -65,10 +65,10 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 					}.\nCurrent values:\n${Object.keys(this.config)
 						.map((key) => `${key}	-	${this.config[key as keyof ConfigTypes]}`)
 						.join("\n")}`,
-				);
+				)
 			}
 
-			const releasesPath = artifacts[0];
+			const releasesPath = artifacts[0]
 
 			/**
 			 * The exe is located where RELEASES is.
@@ -85,18 +85,18 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 				 */
 				const nupkgFileName = fs
 					.readFileSync(releasesPath, "utf8")
-					.split(" ")[1];
+					.split(" ")[1]
 
-				const nupkgFilePath = releasesPath.replace("RELEASES", nupkgFileName);
+				const nupkgFilePath = releasesPath.replace("RELEASES", nupkgFileName)
 
 				const exeArtifact = artifacts.find((artifact) =>
 					artifact.endsWith(".exe"),
-				);
+				)
 
 				const exeName =
-					exeArtifact || nupkgFileName.replace("-full.nupkg", ".exe");
+					exeArtifact || nupkgFileName.replace("-full.nupkg", ".exe")
 
-				const exeFilePath = releasesPath.replace("RELEASES", exeName);
+				const exeFilePath = releasesPath.replace("RELEASES", exeName)
 
 				/**
 				 * The CodeSignTool calls other subfolders which means it needs
@@ -111,8 +111,8 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 				 * 		.\jdk-11.0.2\bin\java -jar .\jar\code_sign_tool-1.3.0.jar %*
 				 * )
 				 */
-				const { dir: codeSignToolFolder, name } = path.parse(signToolPath);
-				const codeSignToolFile = path.join(codeSignToolFolder, name);
+				const { dir: codeSignToolFolder, name } = path.parse(signToolPath)
+				const codeSignToolFile = path.join(codeSignToolFolder, name)
 
 				const execSyncSettings = {
 					stdio: "inherit",
@@ -121,7 +121,7 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 						...process.env,
 						CODE_SIGN_TOOL_PATH: codeSignToolFolder,
 					},
-				} as ExecSyncOptionsWithStringEncoding;
+				} as ExecSyncOptionsWithStringEncoding
 
 				/**
 				 * We sign both the .exe and .nupkg files.
@@ -132,7 +132,7 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 							userTotp ? `-totp_secret="${userTotp}"` : ""
 						}`,
 						execSyncSettings,
-					);
+					)
 
 					/**
 					 * To sign the .nupkg files we also need to make sure the CodeSignTool
@@ -143,11 +143,11 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 						codeSignToolFolder,
 						"conf",
 						"code_sign_tool.properties",
-					);
+					)
 					const codeSignToolConfig = fs.readFileSync(
 						pathtoCodeSignToolConf,
 						"utf8",
-					);
+					)
 
 					if (
 						!codeSignToolConfig.includes(
@@ -157,7 +157,7 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 						fs.appendFileSync(
 							pathtoCodeSignToolConf,
 							`\nTSA_LEGACY_URL=http://ts.ssl.com/legacy`,
-						);
+						)
 					}
 
 					execSync(
@@ -165,17 +165,17 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 							userTotp ? `-totp_secret="${userTotp}"` : ""
 						}`,
 						execSyncSettings,
-					);
+					)
 				} catch (e) {
 					if (e instanceof Error) {
-						throw new Error(e.message);
+						throw new Error(e.message)
 					} else {
-						throw e;
+						throw e
 					}
 				}
 			}
 
-			return data;
-		});
-	};
+			return data
+		})
+	}
 }
