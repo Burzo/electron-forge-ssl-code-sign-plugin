@@ -17,7 +17,7 @@ type ConfigTypes = {
 	signToolPath: string
 }
 
-export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
+class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 	name = "@burzo/electron-forge-ssl-code-sign-plugin"
 	config: ConfigTypes
 
@@ -179,3 +179,5 @@ export class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 		})
 	}
 }
+
+module.exports = ElectronForgeSslCodeSignPlugin
