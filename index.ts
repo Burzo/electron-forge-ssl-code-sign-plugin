@@ -1,11 +1,11 @@
 import PluginBase from "@electron-forge/plugin-base"
 import {
+	ForgeConfigMaker,
 	ForgeMakeResult,
 	ForgeMultiHookMap,
-	IForgeResolvableMaker,
 	ResolvedForgeConfig,
 } from "@electron-forge/shared-types"
-import { execSync, ExecSyncOptionsWithStringEncoding } from "child_process"
+import { ExecSyncOptionsWithStringEncoding, execSync } from "child_process"
 import fs from "fs-extra"
 import path from "path"
 
@@ -13,13 +13,14 @@ type ConfigTypes = {
 	userName: string
 	password: string
 	credentialId: string
-	userTotp: string
+	userTotp?: string
 	signToolPath: string
 }
 
 class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 	name = "@burzo/electron-forge-ssl-code-sign-plugin"
-	
+	config: ConfigTypes
+
 	constructor(config: ConfigTypes) {
 		super(config)
 		this.config = config
@@ -33,15 +34,17 @@ class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 		forgeConfig: ResolvedForgeConfig,
 		makeResults: ForgeMakeResult[],
 	) => {
-		const squirrelMaker: IForgeResolvableMaker = forgeConfig.makers.find(
-			(maker) =>
-				(maker as IForgeResolvableMaker)?.name ===
-				"@electron-forge/maker-squirrel",
-		) as IForgeResolvableMaker
-
-		if (!squirrelMaker) {
+		const squirrelMaker: ForgeConfigMaker | undefined = forgeConfig.makers.find(
+			(maker) => "name" in maker && maker.name === "squirrel",
+		)
+		const squirrelResolvableMaker: ForgeConfigMaker | undefined =
+			forgeConfig.makers.find(
+				(maker) =>
+					"name" in maker && maker.name === "@electron-forge/maker-squirrel",
+			)
+		if (!squirrelMaker && !squirrelResolvableMaker) {
 			throw new Error(
-				`The plugin ${this.name} can not work without @electron-forge/maker-squirrel. Remove it from the plugins array.`,
+				`The plugin ${this.name} can not work without "@electron-forge/maker-squirrel" or "squirrel". Remove it from the plugins array.`,
 			)
 		}
 
@@ -60,7 +63,7 @@ class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 					`You did not provide all the required config variables to ${
 						this.name
 					}.\nCurrent values:\n${Object.keys(this.config)
-						.map((key) => `${key}  -  ${this.config[key as keyof ConfigTypes]}`)
+						.map((key) => `${key}	-	${this.config[key as keyof ConfigTypes]}`)
 						.join("\n")}`,
 				)
 			}
@@ -86,9 +89,12 @@ class ElectronForgeSslCodeSignPlugin extends PluginBase<ConfigTypes> {
 
 				const nupkgFilePath = releasesPath.replace("RELEASES", nupkgFileName)
 
-				const exeName = squirrelMaker.config?.setupExe
-					? squirrelMaker.config?.setupExe
-					: nupkgFileName.replace("-full.nupkg", ".exe")
+				const exeArtifact = artifacts.find((artifact) =>
+					artifact.endsWith(".exe"),
+				)
+
+				const exeName =
+					exeArtifact || nupkgFileName.replace("-full.nupkg", ".exe")
 
 				const exeFilePath = releasesPath.replace("RELEASES", exeName)
 
